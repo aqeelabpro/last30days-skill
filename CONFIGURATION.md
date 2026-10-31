@@ -818,6 +818,22 @@ For competitor-vs-comparisons that recur, a pre-written JSON skeleton per client
 
 Pass as `--competitors-plan @client/competitors-plan.json` (or as a string). See `skills/last30days/references/comparison.md` for the full schema.
 
+### 5. Cursor Cloud Agents
+
+`.cursor/Dockerfile` and `.cursor/environment.json` are the Cloud Agent image. Ubuntu 24.04, Python 3.12 from apt, and Node.js 22 from the official linux-x64 tarball (SHA-256 checked in the image build; the download is not executed as a script). The container user is `ubuntu`. The image does not install OpenSSH, `gh`, `curl`, browser packages, or API keys.
+
+The image environment sets `FROM_BROWSER=off`, `BROWSER_CONSENT=false`, `AGENTCOOKIE=off`, `LAST30DAYS_SKIP_KEYCHAIN=1`, `LAST30DAYS_TRUSTPILOT_NO_BROWSER=1`, `LAST30DAYS_NATIVE_SEARCH=1`, and `EXCLUDE_SOURCES=polymarket`. Reports go to `LAST30DAYS_MEMORY_DIR` (`/workspace/.last30days-out` unless overridden).
+
+Run research through `.cursor/research.sh` so those locks are applied again and `--no-browser-cookies` is always passed:
+
+```bash
+.cursor/research.sh "battery recycling ideas" --emit=compact
+```
+
+The wrapper refuses `setup`, `doctor`, `--probe`, `--publish-html`, and `--allow-browser-cookies`. `setup` would download Printing Press CLIs with `npx`. `doctor` still requests `https://gamma-api.polymarket.com/events?limit=1` when invoked directly, because that probe does not honor `EXCLUDE_SOURCES`. Do not call `doctor` or the engine binary for Cloud Agent research.
+
+With no API keys, a research run sends the topic to public Reddit, Hacker News, and GitHub. General web search stays with Cursor (`LAST30DAYS_NATIVE_SEARCH=1`). Polymarket is not queried. GitHub stays available and is unauthenticated in this image because `gh` is not installed. If a later environment puts an authenticated `gh` on `PATH`, the engine will call `gh auth token` and send that token to `api.github.com`.
+
 ### Grok Bot
 
 On a Grok Bot host the bot exports `LAST30DAYS_HOST=grok-bot` on every engine call (first-run setup also persists it to `.env`), and X search runs through official channels only, in this order:
