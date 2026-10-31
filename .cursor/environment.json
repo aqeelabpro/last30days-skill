@@ -1,0 +1,8 @@
+{
+  "name": "last30days secure",
+  "user": "ubuntu",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "install": "mkdir -p \"${LAST30DAYS_MEMORY_DIR:-/workspace/.last30days-out}\"\npython3 -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)'\nnode --version\nnpm --version\ntest -x .cursor/research.sh"
+}

@@ -43,6 +43,10 @@ uv run python .github/scripts/prepare_release.py --bump patch   # or --version X
 
 Python 3.12+ required. Use `uv` for the env; the venv lives at `.venv/`.
 
+## Cursor Cloud research profile
+
+Cloud Agent research uses `.cursor/Dockerfile`, `.cursor/environment.json`, and `.cursor/research.sh`. Run `.cursor/research.sh "<topic>"`, not `setup` or `doctor`. The wrapper keeps browser cookies off and excludes Polymarket. Direct `doctor` still probes `gamma-api.polymarket.com`; the wrapper refuses it. User-facing detail is in `CONFIGURATION.md` under Cursor Cloud Agents.
+
 ## Changelog and releases (agents)
 
 Agents open most PRs. Follow this so `CHANGELOG.md` stops conflicting and versions stay lockstep:
